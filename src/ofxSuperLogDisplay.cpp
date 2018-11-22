@@ -313,7 +313,7 @@ void ofxSuperLogDisplay::draw(float screenW, float screenH) {
 		ofDrawRectangle(x + pad, y1, sepBarW - 2 * pad, y2 - y1);
 		ofPushMatrix();
 		ofTranslate(x, screenH - 18);
-		ofRotateDeg(-90, 0, 0, 1);
+		ofRotate(-90, 0, 0, 1);
 		string helpMsg = "'t' to show log times  'c' to clear log.";
 		#ifdef USE_OFX_FONTSTASH
 		if(font){
