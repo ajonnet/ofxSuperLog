@@ -78,6 +78,7 @@ ofxSuperLog::ofxSuperLog(bool writeToConsole, bool drawToScreen, string logDirec
 	this->loggingToFile = logDirectory!="";
 	this->loggingToScreen = drawToScreen;
 	this->loggingToConsole = writeToConsole;
+    this->simpleLoggingToConsole = true; //Hardcoded
 	this->logDirectory = logDirectory;
 	if(loggingToFile) {
 		if(!ofFile(logDirectory).exists()) {
@@ -178,35 +179,42 @@ void ofxSuperLog::log(ofLogLevel level, const string & module, const string & me
 	}
 	if(loggingToScreen) displayLogger.log(level, filteredModName, message);
 	if(loggingToConsole){
-		string emojiIcon = "";
-		#if defined(TARGET_OSX) //sadly Xcode doesn't allow for colored console, but its really helpful to get warnings and errs to stand out
-								//so we use emoji for that (which work on OSX but not so much on win)
-		emojiIcon = getEmojiForLogLevel(level) + " ";
-		#endif
-		if(colorTerm){ //colorize term output
-			string colorMsg;
-			switch (level) {
-				case OF_LOG_VERBOSE: colorMsg = "\033[0;37m"; break; //gray
-				case OF_LOG_NOTICE: colorMsg = "\033[0;32m"; break; //green
-				case OF_LOG_WARNING: colorMsg = "\033[30;43m"; break; //yellow
-				case OF_LOG_ERROR: colorMsg = "\033[30;41m"; break; //red bg
-				case OF_LOG_FATAL_ERROR: colorMsg = "\033[30;45m"; break; //purple
-				default : break;
-			}
-			if(consoleShowTimestamps){
-				consoleLogger.log(level, filteredModName, emojiIcon + colorMsg + timeOfLog + " - " + message + "\033[0;0m");
-			}else{
-				consoleLogger.log(level, filteredModName, emojiIcon + colorMsg + message + "\033[0;0m");
-			}
-
-		}else{
-			if(consoleShowTimestamps){
-				consoleLogger.log(level, filteredModName, emojiIcon + timeOfLog + " - " + message);
-			}else{
-				consoleLogger.log(level, filteredModName, emojiIcon + message);
-			}
-		}
+        
+        if(simpleLoggingToConsole) {
+            simpleConsoleLogger.log(level, module, message);
+        }else {
+            
+            string emojiIcon = "";
+#if defined(TARGET_OSX) //sadly Xcode doesn't allow for colored console, but its really helpful to get warnings and errs to stand out
+            //so we use emoji for that (which work on OSX but not so much on win)
+            emojiIcon = getEmojiForLogLevel(level) + " ";
+#endif
+            if(colorTerm){ //colorize term output
+                string colorMsg;
+                switch (level) {
+                    case OF_LOG_VERBOSE: colorMsg = "\033[0;37m"; break; //gray
+                    case OF_LOG_NOTICE: colorMsg = "\033[0;32m"; break; //green
+                    case OF_LOG_WARNING: colorMsg = "\033[30;43m"; break; //yellow
+                    case OF_LOG_ERROR: colorMsg = "\033[30;41m"; break; //red bg
+                    case OF_LOG_FATAL_ERROR: colorMsg = "\033[30;45m"; break; //purple
+                    default : break;
+                }
+                if(consoleShowTimestamps){
+                    consoleLogger.log(level, filteredModName, emojiIcon + colorMsg + timeOfLog + " - " + message + "\033[0;0m");
+                }else{
+                    consoleLogger.log(level, filteredModName, emojiIcon + colorMsg + message + "\033[0;0m");
+                }
+                
+            }else{
+                if(consoleShowTimestamps){
+                    consoleLogger.log(level, filteredModName, emojiIcon + timeOfLog + " - " + message);
+                }else{
+                    consoleLogger.log(level, filteredModName, emojiIcon + message);
+                }
+            }
+        }
 	}
+    
 	/*
 	if(logToNotification){
 		if (level >= OF_LOG_ERROR){

@@ -39,6 +39,7 @@
 #endif
 
 #include "ofxSuperLogDisplay.h"
+#include "ofxSimpleConsoleLogger.hpp"
 
 #if defined(TARGET_OSX) || defined(TARGET_LINUX)
 #include <cxxabi.h>
@@ -117,7 +118,9 @@ private:
 	bool loggingToFile;
 	bool loggingToScreen;
 	bool loggingToConsole;
+    bool simpleLoggingToConsole;
 	ofConsoleLoggerChannel consoleLogger;
+    ofxSimpleConsoleLogger simpleConsoleLogger;
 	ofFileLoggerChannel fileLogger;
 	ofxSuperLogDisplay displayLogger;
 
